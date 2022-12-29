@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/app/models/category_model.dart';
 import 'package:todo/app/services/interfaces/service_interface.dart';
 
 class CategoryService extends IService {
   List<Category> categories = [
-    Category(icon: const Icon(Icons.home), name: 'Geral', tasks: [])
+    Category(icon: Icons.home, name: 'Geral', tasks: [], color: Colors.yellow[100]),
   ];
   
   @override
