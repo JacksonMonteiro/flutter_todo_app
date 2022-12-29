@@ -1,4 +1,3 @@
-import 'package:todo/app/models/category_model.dart';
 
 class Task {
   final String name;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/app/models/category_model.dart';
 import 'package:todo/app/utils/routes.dart';
 
@@ -12,9 +11,11 @@ class CategoryView extends StatefulWidget {
 }
 
 class _CategoryViewState extends State<CategoryView> {
+
   @override
   Widget build(BuildContext context) {
     Category category = ModalRoute.of(context)?.settings.arguments as Category;
+
 
     return Scaffold(
       body: SafeArea(
@@ -30,14 +31,16 @@ class _CategoryViewState extends State<CategoryView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    alignment: Alignment.centerLeft,
+                      alignment: Alignment.centerLeft,
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                       icon: const Icon(Icons.arrow_back)),
                   IconButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed(Routes.instance.ADD_TASK, arguments: category.color);
+                        Navigator.of(context).pushNamed(
+                            Routes.instance.ADD_TASK,
+                            arguments: category.color);
                       },
                       icon: const Icon(Icons.add)),
                 ],
@@ -70,7 +73,35 @@ class _CategoryViewState extends State<CategoryView> {
                     ],
                   )
                 ],
-              )
+              ),
+              const SizedBox(
+                height: 32,
+              ),
+              ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: 1,
+                      itemBuilder: (context, i) => Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.green,
+                                child: IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.check,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                'Tarefa 1',
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ))
             ],
           ),
         ),

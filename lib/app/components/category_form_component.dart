@@ -1,15 +1,14 @@
+// ignore_for_file: unused_field, must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
-import 'package:todo/app/blocs/category/category_bloc.dart';
-import 'package:todo/app/blocs/category/category_events.dart';
 import 'package:todo/app/components/button_component.dart';
 import 'package:todo/app/components/text_field_component.dart';
 import 'package:todo/app/models/category_model.dart';
 
 class CategoryFormComponent extends StatefulWidget {
-  CategoryBloc bloc;
-
-  CategoryFormComponent({super.key, required this.bloc});
+  
+  CategoryFormComponent({super.key});
 
   @override
   State<CategoryFormComponent> createState() => CategoryFormComponentState();
@@ -96,7 +95,7 @@ class CategoryFormComponentState extends State<CategoryFormComponent> {
                   label: 'Adicionar Transação',
                   onPressed: () {
                     final category = Category(icon: _icon, name: _nameController.text, tasks: [], color: _color);
-                    widget.bloc.add(AddCategoryEvent(category: category));
+                    // widget.bloc.add(AddCategoryEvent(category: category));
                   },
                 ),
               )

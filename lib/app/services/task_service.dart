@@ -3,7 +3,9 @@ import 'package:todo/app/services/interfaces/service_interface.dart';
 
 class TaskService extends IService {
   final List<Task> _tasks = [
-    Task(name: 'Tarefa inicial', category: 'Geral')
+    Task(name: 'Tarefa inicial', category: 'Geral'),
+    Task(name: 'Tarefa inicial', category: 'Geral'),
+    Task(name: 'Tarefa inicial', category: 'Geral'),
   ];
   
   @override
@@ -14,6 +16,7 @@ class TaskService extends IService {
   
   @override
   List<Task> get() {
+    print('Get task called');
     return _tasks;
   }
   
