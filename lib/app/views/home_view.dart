@@ -29,32 +29,97 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<CategoryState>(
-          stream: bloc.stream,
-          builder: (context, snapshot) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  children: snapshot.data?.categories
-                          .map((category) => Container(
-                                decoration: BoxDecoration(
-                                  color: category.color,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                  child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(category.icon, size: 64),
-                                  Text(category.name, style: TextStyle(fontSize: 24),),
-                                  Text('${category.tasks.length} tarefas')
-                                ],
-                              )))
-                          .toList() ??
-                      []),
-            );
-          }),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Olá! Seja bem-vindo',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: const [
+                          Text(
+                            'Você tem ',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            '0',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.red
+                            ),
+                          ),
+                          Text(
+                            ' novas tarefas para hoje',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.grid_view_sharp),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.line_weight_sharp),
+                            onPressed: () {},
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              StreamBuilder<CategoryState>(
+                  stream: bloc.stream,
+                  builder: (context, snapshot) {
+                    return GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        children: snapshot.data?.categories
+                                .map((category) => Container(
+                                    decoration: BoxDecoration(
+                                      color: category.color,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(category.icon, size: 64),
+                                        Text(
+                                          category.name,
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        Text('${category.tasks.length} tarefas')
+                                      ],
+                                    )))
+                                .toList() ??
+                            []);
+                  }),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
