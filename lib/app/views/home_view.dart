@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/app/blocs/category/category_bloc.dart';
 import 'package:todo/app/blocs/category/category_events.dart';
 import 'package:todo/app/blocs/category/category_state.dart';
+import 'package:todo/app/components/category_form_component.dart';
+import 'package:todo/app/models/category_model.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -33,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            children: [
+              children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -96,23 +99,30 @@ class _HomeViewState extends State<HomeView> {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         children: snapshot.data?.categories
-                                .map((category) => Container(
-                                    decoration: BoxDecoration(
-                                      color: category.color,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(category.icon, size: 64),
-                                        Text(
-                                          category.name,
-                                          style: TextStyle(fontSize: 24),
-                                        ),
-                                        Text('${category.tasks.length} tarefas')
-                                      ],
-                                    )))
+                                .map((category) => GestureDetector(
+                                  onTap: () {
+                                    if (category.name == 'Adicionar') {
+                                      showModalBottomSheet(context: context, builder: (_) => CategoryFormComponent(bloc: bloc,));
+                                    }
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        color: category.color,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(category.icon, size: 64),
+                                          Text(
+                                            category.name,
+                                            style: const TextStyle(fontSize: 24),
+                                          ),
+                                          (category.icon != Icons.add) ? Text('${category.tasks.length} tarefas') : const Text('')
+                                        ],
+                                      )),
+                                ))
                                 .toList() ??
                             []);
                   }),

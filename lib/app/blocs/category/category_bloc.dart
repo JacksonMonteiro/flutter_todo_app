@@ -12,5 +12,10 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     on<LoadCategoriesEvent>(
       (event, emit) => emit(CategorySuccessState(categories: _service.get() as List<Category>))
     );
+
+    on<AddCategoryEvent>(
+      (event, emit) => emit(CategorySuccessState(categories: _service.add(event.category) as List<Category>)),
+    );
   }
+ 
 }
