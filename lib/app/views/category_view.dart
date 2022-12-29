@@ -37,7 +37,7 @@ class _CategoryViewState extends State<CategoryView> {
                       icon: const Icon(Icons.arrow_back)),
                   IconButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed(Routes.instance.ADD_TASK);
+                        Navigator.of(context).pushNamed(Routes.instance.ADD_TASK, arguments: category.color);
                       },
                       icon: const Icon(Icons.add)),
                 ],

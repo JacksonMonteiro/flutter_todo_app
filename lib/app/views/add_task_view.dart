@@ -33,13 +33,15 @@ class _AddTaskViewState extends State<AddTaskView> {
 
   @override
   Widget build(BuildContext context) {
+    Color? color = ModalRoute.of(context)?.settings.arguments as Color?;
+
     return Scaffold(
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
           width: double.infinity,
           height: double.infinity,
-          color: Colors.red[100],
+          color: color,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
