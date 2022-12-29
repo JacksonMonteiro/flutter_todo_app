@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:todo/app/models/category_model.dart';
+import 'package:todo/app/utils/routes.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
@@ -36,7 +37,7 @@ class _CategoryViewState extends State<CategoryView> {
                       icon: const Icon(Icons.arrow_back)),
                   IconButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamed(Routes.instance.ADD_TASK);
                       },
                       icon: const Icon(Icons.add)),
                 ],

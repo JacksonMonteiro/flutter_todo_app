@@ -4,13 +4,14 @@ import 'package:todo/app/services/interfaces/service_interface.dart';
 
 class CategoryService extends IService {
   List<Category> categories = [
+    Category(icon: Icons.home, name: 'Geral', tasks: [], color: Colors.blue[100]),
     Category(icon: Icons.add, name: 'Adicionar', tasks: [], color: Colors.red[100]),
   ];
   
   @override
   List<Category> add(data) {
     categories.insert(0, data as Category);
-    return categories;
+    return get();
   }
   
   @override
