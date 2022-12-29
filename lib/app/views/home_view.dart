@@ -5,6 +5,7 @@ import 'package:todo/app/blocs/category/category_events.dart';
 import 'package:todo/app/blocs/category/category_state.dart';
 import 'package:todo/app/components/category_form_component.dart';
 import 'package:todo/app/models/category_model.dart';
+import 'package:todo/app/utils/routes.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -103,6 +104,8 @@ class _HomeViewState extends State<HomeView> {
                                   onTap: () {
                                     if (category.name == 'Adicionar') {
                                       showModalBottomSheet(context: context, builder: (_) => CategoryFormComponent(bloc: bloc,));
+                                    } else {
+                                      Navigator.of(context).pushNamed(Routes.instance.CATEGORY, arguments: category);
                                     }
                                   },
                                   child: Container(
