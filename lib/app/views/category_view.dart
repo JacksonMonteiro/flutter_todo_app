@@ -107,7 +107,7 @@ class _CategoryViewState extends State<CategoryView> implements CategoryViewCont
                                   backgroundColor: Colors.green,
                                   child: IconButton(
                                     onPressed: () {
-                                      _presenter.removeTask(Task(name: _presenter.tasks[i].name, category: category.name));
+                                      _presenter.removeTask(i);
                                     },
                                     icon: const Icon(
                                       Icons.check,

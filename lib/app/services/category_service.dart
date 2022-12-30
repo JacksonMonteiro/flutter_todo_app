@@ -24,4 +24,10 @@ class CategoryService extends IService {
     categories.remove(data as Category);
     return categories;
   }
+
+  @override
+  List<Category> removeByIndex(int index) {
+    categories.removeAt(index);
+    return categories;
+  }
 }

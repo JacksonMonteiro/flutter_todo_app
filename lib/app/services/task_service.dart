@@ -28,4 +28,10 @@ class TaskService extends IService {
 
     return _tasks;
   }
+
+  @override
+  List<Task> removeByIndex(int index) {
+    _tasks.removeAt(index);
+    return _tasks;
+  }
 }

@@ -28,8 +28,8 @@ class CategoryViewPresenter {
     contract.changeState();
   }
 
-  removeTask(Task task) {
-    tasks = taskServices.remove(task) as List<Task>;
+  removeTask(int index) {
+    tasks = taskServices.removeByIndex(index) as List<Task>;
     contract.changeState();
   }
 
