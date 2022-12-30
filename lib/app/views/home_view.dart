@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/app/components/category_form_component.dart';
-import 'package:todo/app/models/category_model.dart';
 import 'package:todo/app/presenters/home_presenter.dart';
 import 'package:todo/app/utils/routes.dart';
 
@@ -17,13 +15,18 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
 
   // Variables
   bool isGrid = true;
-  List<Category> categories = [];
 
   @override
   void initState() {
     super.initState();
     _presenter = HomePresenter(this);
-    categories = _presenter.loadCategories();
+    _presenter.loadCategories();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _presenter.state.dispose();
   }
 
   @override
@@ -101,64 +104,63 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
             ),
             isGrid
                 ? GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    children: categories
-                            .map((category) => GestureDetector(
-                                  onTap: () {
-                                    if (category.name == 'Adicionar') {
-                                      showModalBottomSheet(
-                                          context: context,
-                                          builder: (_) =>
-                                              CategoryFormComponent());
-                                    } else {
-                                      Navigator.of(context).pushNamed(
-                                          Routes.instance.CATEGORY,
-                                          arguments: category);
-                                    }
-                                  },
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                        color: category.color,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(category.icon, size: 64),
-                                          Text(
-                                            category.name,
-                                            style:
-                                                const TextStyle(fontSize: 24),
-                                          ),
-                                          (category.icon != Icons.add)
-                                              ? Text(
-                                                  '${category.tasks.length} tarefas')
-                                              : const Text('')
-                                        ],
-                                      )),
-                                ))
-                            .toList() ??
-                        [])
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      children: _presenter.categories
+                              .map((category) => GestureDetector(
+                                    onTap: () {
+                                      if (category.name == 'Adicionar') {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (_) =>
+                                                CategoryFormComponent(homePresenter: _presenter,));
+                                      } else {
+                                        Navigator.of(context).pushNamed(
+                                            Routes.instance.CATEGORY,
+                                            arguments: category);
+                                      }
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          color: category.color,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(category.icon, size: 64),
+                                            Text(
+                                              category.name,
+                                              style:
+                                                  const TextStyle(fontSize: 24),
+                                            ),
+                                            (category.icon != Icons.add)
+                                                ? Text(
+                                                    '${category.tasks.length} tarefas')
+                                                : const Text('')
+                                          ],
+                                        )),
+                                  ))
+                              .toList())
                 : ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: categories.length,
+                    itemCount: _presenter.categories.length,
                     itemBuilder: (context, i) {
                       return GestureDetector(
                         onTap: () {
-                          if (categories[i].name == 'Adicionar') {
+                          if (_presenter.categories[i].name == 'Adicionar') {
                             showModalBottomSheet(
                                 context: context,
-                                builder: (_) => CategoryFormComponent());
+                                builder: (_) => CategoryFormComponent(homePresenter: _presenter,));
                           } else {
                             Navigator.of(context).pushNamed(
                                 Routes.instance.CATEGORY,
-                                arguments: categories[i]);
+                                arguments: _presenter.categories[i]);
                           }
                         },
                         child: Container(
@@ -166,14 +168,14 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
                                 vertical: 16, horizontal: 8),
                             margin: const EdgeInsets.only(bottom: 10),
                             decoration: BoxDecoration(
-                              color: categories[i].color,
+                              color: _presenter.categories[i].color,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Icon(categories[i].icon, size: 42),
+                                Icon(_presenter.categories[i].icon, size: 42),
                                 const SizedBox(
                                   width: 8,
                                 ),
@@ -181,14 +183,14 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      categories[i].name ?? '',
+                                      _presenter.categories[i].name,
                                       style: const TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    (categories[i].icon != Icons.add)
+                                    (_presenter.categories[i].icon != Icons.add)
                                         ? Text(
-                                            '${categories[i].tasks.length} tarefas')
+                                            '${_presenter.categories[i].tasks.length} tarefas')
                                         : Container()
                                   ],
                                 )
@@ -200,5 +202,10 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
         ),
       ),
     );
+  }
+
+  @override
+  changeState() {
+    setState(() {});
   }
 }

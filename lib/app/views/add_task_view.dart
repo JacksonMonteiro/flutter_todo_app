@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo/app/components/text_field_component.dart';
+import 'package:todo/app/models/task_model.dart';
+import 'package:todo/app/presenters/category_view_presenter.dart';
 
 class AddTaskView extends StatefulWidget {
   const AddTaskView({super.key});
@@ -19,7 +21,8 @@ class _AddTaskViewState extends State<AddTaskView> {
 
   @override
   Widget build(BuildContext context) {
-    Color? color = ModalRoute.of(context)?.settings.arguments as Color?;
+    Map<String, dynamic> args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    CategoryViewPresenter _cPresenter = args['presenter'];
 
     return Scaffold(
       body: SafeArea(
@@ -27,7 +30,7 @@ class _AddTaskViewState extends State<AddTaskView> {
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
           width: double.infinity,
           height: double.infinity,
-          color: color,
+          color: args['color'],
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -100,12 +103,15 @@ class _AddTaskViewState extends State<AddTaskView> {
                 ],
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _cPresenter.addTask(Task(name: _taskController.text, category: 'Geral'));
+                  Navigator.of(context).pop();
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 40)),
                 child: const Text(
-                  'Adicionar nova tarefa',
+                  'Adicionar tarefa',
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,

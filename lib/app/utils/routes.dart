@@ -19,7 +19,7 @@ class Routes {
   // Routes map
   Map<String, Widget Function(BuildContext)> get routes => {
     HOME: (context) => const HomeView(),
-    // CATEGORY: (context)  => const CategoryView(),
-    // ADD_TASK: (context) => const AddTaskView(),
+    CATEGORY: (context)  => const CategoryView(),
+    ADD_TASK: (context) => const AddTaskView(),
   };
 }

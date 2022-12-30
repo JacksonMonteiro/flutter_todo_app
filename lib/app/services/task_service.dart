@@ -2,11 +2,7 @@ import 'package:todo/app/models/task_model.dart';
 import 'package:todo/app/services/interfaces/service_interface.dart';
 
 class TaskService extends IService {
-  final List<Task> _tasks = [
-    Task(name: 'Tarefa inicial', category: 'Geral'),
-    Task(name: 'Tarefa inicial', category: 'Geral'),
-    Task(name: 'Tarefa inicial', category: 'Geral'),
-  ];
+  final List<Task> _tasks = [Task(name: 'Tarefa 1', category: 'Geral'), Task(name: 'Tarefa 2', category: 'Geral'),];
   
   @override
   List<Task> add(data) {
@@ -16,13 +12,20 @@ class TaskService extends IService {
   
   @override
   List<Task> get() {
-    print('Get task called');
     return _tasks;
   }
   
   @override
   List<Task> remove(data) {
-    _tasks.remove(data as Task);
+    Task taskData = data as Task;
+    for (var task in _tasks) {
+      if  (task.name == taskData.name && task.category == taskData.category) {
+        _tasks.remove(task);
+        break;
+      }
+    }
+
+
     return _tasks;
   }
 }
