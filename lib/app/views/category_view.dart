@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/app/models/category_model.dart';
 import 'package:todo/app/models/task_model.dart';
 import 'package:todo/app/presenters/category_view_presenter.dart';
@@ -42,90 +41,95 @@ class _CategoryViewState extends State<CategoryView> implements CategoryViewCont
           width: double.infinity,
           height: double.infinity,
           color: category.color,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                      alignment: Alignment.centerLeft,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(Icons.arrow_back)),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            Routes.instance.ADD_TASK,
-                            arguments: {"color": category.color, "presenter": _presenter});
-                      },
-                      icon: const Icon(Icons.add)),
-                ],
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                      backgroundColor: Colors.black,
-                      foregroundColor: category.color,
-                      child: Icon(category.icon)),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        category.name,
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '${category.tasks.length} tarefas',
-                        style: const TextStyle(fontSize: 16),
-                      )
-                    ],
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: _presenter.tasks.length,
-                      itemBuilder: (context, i) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.green,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      _presenter.removeTask(i);
-                                    },
-                                    icon: const Icon(
-                                      Icons.check,
-                                      color: Colors.black,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        alignment: Alignment.centerLeft,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.arrow_back)),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                              Routes.instance.ADD_TASK,
+                              arguments: {"color": category.color, "presenter": _presenter});
+                        },
+                        icon: const Icon(Icons.add)),
+                  ],
+                ),
+                const SizedBox(
+                  height: 32,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                        backgroundColor: Colors.black,
+                        foregroundColor: category.color,
+                        child: Icon(category.icon)),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          category.name,
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '${_presenter.tasksNumber} tarefas',
+                          style: const TextStyle(fontSize: 16),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 32,
+                ),
+                ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: _presenter.tasks.length,
+                        reverse: true,
+                        itemBuilder: (context, i) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.green,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        _presenter.category = category.name;
+                                        _presenter.tasksNumber = category.tasks;
+                                        _presenter.removeTask(_presenter.tasks[i].name, i);
+                                      },
+                                      icon: const Icon(
+                                        Icons.check,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  _presenter.tasks[i].name,
-                                  style: const TextStyle(fontSize: 20),
-                                ),
-                              ],
-                            ),
-                      ))
-            ],
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    _presenter.tasks[i].name,
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
+                                ],
+                              ),
+                        ))
+              ],
+            ),
           ),
         ),
       );
@@ -135,4 +139,11 @@ class _CategoryViewState extends State<CategoryView> implements CategoryViewCont
   changeState() {
     setState(() {});
   }
+
+  @override
+  loading() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }  
 }

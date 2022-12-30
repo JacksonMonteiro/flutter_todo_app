@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:todo/app/models/task_model.dart';
+import 'package:todo/app/services/category_service.dart';
 import 'package:todo/app/services/interfaces/service_interface.dart';
 import 'package:todo/app/services/task_service.dart';
 
 abstract class CategoryViewContract {
   start() {}
+  loading() {}
   changeState() {}
 }
 
@@ -12,33 +14,98 @@ class CategoryViewPresenter {
   // Variables
   List<Task> tasks = [];
 
+  String category = '';
+  int tasksNumber = 0;
+  bool isCategorySelected = false;
+
   // State and service
   final state = ValueNotifier<CategoryViewState>(CategoryViewState.start);
-  IService taskServices = TaskService();
+  IService service = TaskService();
+  CategoryService categoryService = CategoryService();
 
   final CategoryViewContract contract;
   CategoryViewPresenter(this.contract);
 
-  getTasks() {
-    tasks = taskServices.get() as List<Task>;
+  getTasks() async {
+    state.value = CategoryViewState.loading;
+    try {
+      var response = await service.get();
+      
+      if (response.isNotEmpty) {
+          tasks = response as List<Task>;
+          tasksNumber = tasks.length;
+      }
+
+    } catch (e) {
+      print('Houve um erro desconhecido: ');
+    }
+    
+    state.value = CategoryViewState.start;
   }
 
-  addTask(Task task) {
-    tasks = taskServices.add(task) as List<Task>;
+  addTask(Task task) async {
+    state.value = CategoryViewState.loading;
+    try {
+      var response = await service.add(task);
+      
+      if (response.isNotEmpty) {
+          tasks = response as List<Task>;
+          updateCategory(category, (tasksNumber + 1));
+          state.value = CategoryViewState.start;
+      }
+    } catch (e) {
+      print('Houve um erro desconhecido: ');
+    }
     contract.changeState();
   }
 
-  removeTask(int index) {
-    tasks = taskServices.removeByIndex(index) as List<Task>;
+  updateCategory(String name, int tasks) async {
+    try {
+      var response = await categoryService.put(name, tasks);
+      if (response <= 0) {
+        print('Erro ao atualizar');
+      } else {
+        return true;
+      }
+    } catch (e) {
+      print('Erro ao atualizar tarefas na categoria');
+    }
+
+    return false;
+  }
+
+  removeTask(String name, int index) async {
+    state.value = CategoryViewState.loading;
+    try {
+      var response = await service.remove(name);
+      if (response <= 0 ) {
+        print('Erro ao deletar');
+      } else {
+        await updateCategory(category, (tasksNumber - 1));
+        removeByIndex(index);
+        return true;
+      }
+    } catch (e) {
+      print('Houve um erro desconhecido ao deletar');
+    }
+    
+    return false;
+  }
+
+  removeByIndex(int index) {
+    service.removeByIndex(index);
     contract.changeState();
+    state.value = CategoryViewState.start;
   }
 
   stateManager(CategoryViewState state) {
     switch(state) {
       case CategoryViewState.start:
         return contract.start();
+      case CategoryViewState.loading:
+        return contract.loading();
     }
   }
 }
 
-enum  CategoryViewState { start }
+enum  CategoryViewState { start, loading }

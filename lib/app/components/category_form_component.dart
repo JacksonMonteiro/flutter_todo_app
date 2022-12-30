@@ -96,7 +96,7 @@ class CategoryFormComponentState extends State<CategoryFormComponent> {
                 child: ButtonComponent(
                   label: 'Adicionar Transação',
                   onPressed: () {
-                    final category = Category(icon: _icon, name: _nameController.text, tasks: [], color: _color);
+                    final category = Category(icon: _icon, name: _nameController.text, tasks: 0, color: _color);
                     widget.homePresenter.addCategory(category);
                     Navigator.of(context).pop();
                   },

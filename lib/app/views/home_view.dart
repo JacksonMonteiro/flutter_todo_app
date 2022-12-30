@@ -140,7 +140,7 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
                                             ),
                                             (category.icon != Icons.add)
                                                 ? Text(
-                                                    '${category.tasks.length} tarefas')
+                                                    '${category.tasks} tarefas')
                                                 : const Text('')
                                           ],
                                         )),
@@ -190,7 +190,7 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
                                     ),
                                     (_presenter.categories[i].icon != Icons.add)
                                         ? Text(
-                                            '${_presenter.categories[i].tasks.length} tarefas')
+                                            '${_presenter.categories[i].tasks} tarefas')
                                         : Container()
                                   ],
                                 )
@@ -207,5 +207,12 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
   @override
   changeState() {
     setState(() {});
+  }
+
+  @override
+  loading() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
   }
 }
