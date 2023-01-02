@@ -20,13 +20,11 @@ class TaskService extends IService {
     }
 
     _tasks.add(data as Task);
-    return await get();
+    return await getWhere(task.category);
   }
   
   @override
-  Future<List<Task>> get() async {
-    // return _tasks;
-
+  get() async {
     _tasks.clear();
     db = await DB.instance.database;
 
@@ -34,6 +32,33 @@ class TaskService extends IService {
     if (dbCategories.isEmpty) {
       print('Consulta retornou lista vazia');
     } else {
+      print('Recuperou pelo menos 1 tarefa');
+      for (var i = 0; i < dbCategories.length; i++) {
+        _tasks.insert(
+            0,
+            Task(
+              id: dbCategories[i]['id'],
+              name: dbCategories[i]['name'],
+              category: dbCategories[i]['category'],
+            ));
+      }
+    }
+
+    return _tasks;
+  }
+
+  @override
+  Future<List<Task>> getWhere(String name) async {
+    // return _tasks;
+
+    _tasks.clear();
+    db = await DB.instance.database;
+
+    List dbCategories = await db.rawQuery('SELECT * FROM tasks WHERE category = "$name"');
+    if (dbCategories.isEmpty) {
+      print('Consulta retornou lista vazia');
+    } else {
+      print('Recuperou pelo menos 1 tarefa');
       for (var i = 0; i < dbCategories.length; i++) {
         _tasks.insert(
             0,

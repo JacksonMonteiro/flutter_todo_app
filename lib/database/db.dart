@@ -15,7 +15,8 @@ class DB {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       codePoint TEXT, 
       name TEXT, 
-      tasks INTEGER
+      tasks INTEGER,
+      color INTEGER
     )
   ''';
 

@@ -21,7 +21,7 @@ class CategoryFormComponentState extends State<CategoryFormComponent> {
   IconData? _icon;
 
   // Colors
-  final List<Color?> _colors = [ Colors.red[100], Colors.green[100], Colors.blue[100], ];
+  final List<Color?> _colors = [ Colors.red[100], Colors.green[100], Colors.blue[100], Colors.yellow[100], Colors.black12, Colors.cyan[100], Colors.indigo[100], Colors.lime[100] ];
   Color? _color;
   Color? _previousColor;
 
@@ -82,7 +82,7 @@ class CategoryFormComponentState extends State<CategoryFormComponent> {
                     setState(() {});
                   },
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.only(right: 7),
                     child: CircleAvatar(
                       backgroundColor: color,
                       child: (_color != null && _color == color) ? const Icon(Icons.check, color: Colors.black,) : const SizedBox(),

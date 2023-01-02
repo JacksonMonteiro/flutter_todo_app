@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:todo/app/models/task_model.dart';
+import 'package:todo/app/presenters/home_presenter.dart';
 import 'package:todo/app/services/category_service.dart';
 import 'package:todo/app/services/interfaces/service_interface.dart';
 import 'package:todo/app/services/task_service.dart';
+import 'package:todo/app/views/home_view.dart';
 
 abstract class CategoryViewContract {
   start() {}
@@ -26,10 +28,10 @@ class CategoryViewPresenter {
   final CategoryViewContract contract;
   CategoryViewPresenter(this.contract);
 
-  initTasksNumber() async {
+  initTasksNumber(String category) async {
     state.value = CategoryViewState.loading;
     try {
-      var response = await service.get();
+      var response = await service.getWhere(category);
       
       if (response.isNotEmpty) {
           tasksNumber = tasks.length;
@@ -41,10 +43,10 @@ class CategoryViewPresenter {
     state.value = CategoryViewState.start;
   }
 
-  getTasks() async {
+  getTasks(String name) async {
     state.value = CategoryViewState.loading;
     try {
-      var response = await service.get();
+      var response = await service.getWhere(name);
       
       if (response.isNotEmpty) {
           tasks = response as List<Task>;
@@ -59,7 +61,7 @@ class CategoryViewPresenter {
     state.value = CategoryViewState.start;
   }
 
-  addTask(Task task) async {
+  addTask(Task task, HomePresenter presenter) async {
     state.value = CategoryViewState.loading;
     try {
       var response = await service.add(task);
@@ -68,7 +70,9 @@ class CategoryViewPresenter {
           tasks = response as List<Task>;
           tasksNumber = tasksNumber + 1;
           updateCategory(category, tasksNumber);
-          print('Número de tarefas: $tasksNumber');
+
+          presenter.loadCategories();
+
           state.value = CategoryViewState.start;
       }
     } catch (e) {
@@ -92,8 +96,8 @@ class CategoryViewPresenter {
     return false;
   }
 
-  removeTask(String name, int index) async {
-    await initTasksNumber();
+  removeTask(String name, int index, HomePresenter presenter) async {
+    await initTasksNumber(category);
     
     print('Número de tarefas: $tasksNumber');
     
@@ -106,6 +110,7 @@ class CategoryViewPresenter {
         tasksNumber = tasksNumber - 1;
         await updateCategory(category, tasksNumber);
         removeByIndex(index);
+        presenter.loadCategories();
         return true;
       }
     } catch (e) {

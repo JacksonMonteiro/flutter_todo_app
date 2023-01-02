@@ -18,7 +18,7 @@ class CategoryService extends IService {
     Category category = data as Category;
 
     var response = await db.rawInsert(
-        'INSERT INTO categories (codePoint, name, tasks) VALUES (${category.icon?.codePoint}, "${category.name}", ${category.tasks})');
+        'INSERT INTO categories (codePoint, name, tasks, color) VALUES (${category.icon?.codePoint}, "${category.name}", ${category.tasks}, ${category.color?.value})');
     if (response <= 0) {
       print('Erro ao adicionar');
     } else {
@@ -44,7 +44,7 @@ class CategoryService extends IService {
               icon: IconData(int.parse(dbCategories[i]['codePoint']), fontFamily: 'MaterialIcons'),
               name: dbCategories[i]['name'],
               tasks: dbCategories[i]['tasks'],
-              color: Colors.green[100],
+              color: Color(dbCategories[i]['color']),
             ));
       }
     }
@@ -68,5 +68,11 @@ class CategoryService extends IService {
     db = await DB.instance.database;
     var response = await db.rawUpdate('UPDATE categories SET tasks = $tasks WHERE name = "$name"');
     return response; 
+  }
+
+  // Nullable
+  @override
+  getWhere(String where) {
+    return null;
   }
 }

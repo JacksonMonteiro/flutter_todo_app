@@ -20,21 +20,6 @@ class AddTaskPresenter {
   final AddTaskContract contract;
   AddTaskPresenter(this.contract);
 
-  loadCategories() async {
-    state.value = AddTaskState.loading;
-    try {
-      var response = await service.get();
-      
-      if (response.isNotEmpty) {
-          categories = response as List<Category>;
-          state.value = AddTaskState.start;
-      }
-
-    } catch (e) {
-      print('Houve um erro desconhecido: ');
-    }
-  }
-
   stateManager(AddTaskState state) {
     switch (state) {
       case AddTaskState.start:

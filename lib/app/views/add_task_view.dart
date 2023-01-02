@@ -3,6 +3,7 @@ import 'package:todo/app/components/text_field_component.dart';
 import 'package:todo/app/models/task_model.dart';
 import 'package:todo/app/presenters/add_task_presenter.dart';
 import 'package:todo/app/presenters/category_view_presenter.dart';
+import 'package:todo/app/presenters/home_presenter.dart';
 
 class AddTaskView extends StatefulWidget {
   const AddTaskView({super.key});
@@ -20,12 +21,12 @@ class _AddTaskViewState extends State<AddTaskView> implements AddTaskContract {
   void initState() {
     super.initState();
     _presenter = AddTaskPresenter(this);
-    _presenter.loadCategories();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: AnimatedBuilder(
         animation: _presenter.state,
         builder: (context, child) =>
@@ -48,9 +49,11 @@ class _AddTaskViewState extends State<AddTaskView> implements AddTaskContract {
 
   @override
   start() {
-    Map<String, dynamic> args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    CategoryViewPresenter _cPresenter = args['presenter'];
+    Map<String, dynamic> args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    CategoryViewPresenter cPresenter = args['presenter'];
+    HomePresenter hPresenter = args['homePresenter'];
+
+    print(cPresenter.category);
 
     return SafeArea(
       child: Container(
@@ -86,60 +89,12 @@ class _AddTaskViewState extends State<AddTaskView> implements AddTaskContract {
                 const SizedBox(
                   height: 16,
                 ),
-                GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 3,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    children: _presenter.categories
-                        .map((category) => GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _cPresenter.category = category.name;
-                                  _cPresenter.isCategorySelected = true;
-                                });
-                              },
-                              child: (category.name == 'Adicionar')
-                                  ? Container()
-                                  : Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        color: _cPresenter.isCategorySelected
-                                            ? Colors.white
-                                            : Colors.white54,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 18,
-                                            height: 18,
-                                            decoration: BoxDecoration(
-                                                color: category.color,
-                                                borderRadius:
-                                                    BorderRadius.circular(9)),
-                                          ),
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                          Text(
-                                            category.name,
-                                            style:
-                                                const TextStyle(fontSize: 18),
-                                          ),
-                                        ],
-                                      )),
-                            ))
-                        .toList())
               ],
             ),
             ElevatedButton(
               onPressed: () {
-                _cPresenter.addTask(
-                    Task(id: null, name: _taskController.text, category: _cPresenter.category));
+                cPresenter.addTask(
+                    Task(id: null, name: _taskController.text, category: cPresenter.category), hPresenter);
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
