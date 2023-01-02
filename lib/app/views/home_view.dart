@@ -11,6 +11,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> implements HomePresenterContract {
+  // Presenter
   late HomePresenter _presenter;
 
   // Variables
@@ -33,9 +34,9 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
   Widget build(BuildContext context) {
     return Scaffold(
         body: AnimatedBuilder(
-      animation: _presenter.state,
-      builder: (context,  child) => _presenter.stateManager(_presenter.state.value)
-    ));
+            animation: _presenter.state,
+            builder: (context, child) =>
+                _presenter.stateManager(_presenter.state.value)));
   }
 
   @override
@@ -56,18 +57,19 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           'Você tem ',
                           style: TextStyle(
                             fontSize: 14,
                           ),
                         ),
                         Text(
-                          '0',
-                          style: TextStyle(fontSize: 14, color: Colors.red),
+                          '${_presenter.tasks}',
+                          style:
+                              const TextStyle(fontSize: 14, color: Colors.red),
                         ),
-                        Text(
+                        const Text(
                           ' novas tarefas para hoje',
                           style: TextStyle(
                             fontSize: 14,
@@ -103,49 +105,58 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
               height: 16,
             ),
             isGrid
-                ? GridView.count(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      children: _presenter.categories
-                              .map((category) => GestureDetector(
-                                    onTap: () {
-                                      if (category.name == 'Adicionar') {
-                                        showModalBottomSheet(
-                                            context: context,
-                                            builder: (_) =>
-                                                CategoryFormComponent(homePresenter: _presenter,));
-                                      } else {
-                                        Navigator.of(context).pushNamed(
-                                            Routes.instance.CATEGORY,
-                                            arguments: category);
-                                      }
-                                    },
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          color: category.color,
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(category.icon, size: 64),
-                                            Text(
-                                              category.name,
-                                              style:
-                                                  const TextStyle(fontSize: 24),
-                                            ),
-                                            (category.icon != Icons.add)
-                                                ? Text(
-                                                    '${category.tasks.length} tarefas')
-                                                : const Text('')
-                                          ],
-                                        )),
-                                  ))
-                              .toList())
+                ? RefreshIndicator(
+                    onRefresh: () {
+                      return _presenter.loadCategories();
+                    },
+                    child: GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        children: _presenter.categories
+                            .map((category) => GestureDetector(
+                                  onTap: () {
+                                    if (category.name == 'Adicionar') {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (_) => CategoryFormComponent(
+                                                homePresenter: _presenter,
+                                              ));
+                                    } else {
+                                      Navigator.of(context).pushNamed(
+                                          Routes.instance.CATEGORY,
+                                          arguments: {
+                                            'category': category,
+                                            'presenter': _presenter,
+                                          });
+                                    }
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        color: category.color,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(category.icon, size: 64),
+                                          Text(
+                                            category.name,
+                                            style:
+                                                const TextStyle(fontSize: 24),
+                                          ),
+                                          (category.icon != Icons.add)
+                                              ? Text(
+                                                  '${category.tasks} tarefas')
+                                              : const Text('')
+                                        ],
+                                      )),
+                                ))
+                            .toList()),
+                  )
                 : ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
@@ -156,7 +167,9 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
                           if (_presenter.categories[i].name == 'Adicionar') {
                             showModalBottomSheet(
                                 context: context,
-                                builder: (_) => CategoryFormComponent(homePresenter: _presenter,));
+                                builder: (_) => CategoryFormComponent(
+                                      homePresenter: _presenter,
+                                    ));
                           } else {
                             Navigator.of(context).pushNamed(
                                 Routes.instance.CATEGORY,
@@ -190,7 +203,7 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
                                     ),
                                     (_presenter.categories[i].icon != Icons.add)
                                         ? Text(
-                                            '${_presenter.categories[i].tasks.length} tarefas')
+                                            '${_presenter.categories[i].tasks} tarefas')
                                         : Container()
                                   ],
                                 )
@@ -207,5 +220,12 @@ class _HomeViewState extends State<HomeView> implements HomePresenterContract {
   @override
   changeState() {
     setState(() {});
+  }
+
+  @override
+  loading() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
   }
 }

@@ -1,31 +1,88 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:todo/app/models/task_model.dart';
 import 'package:todo/app/services/interfaces/service_interface.dart';
+import 'package:todo/database/db.dart';
 
 class TaskService extends IService {
-  final List<Task> _tasks = [Task(name: 'Tarefa 1', category: 'Geral'), Task(name: 'Tarefa 2', category: 'Geral'),];
+  late Database db;
+  final List<Task> _tasks = [];
   
   @override
-  List<Task> add(data) {
+  Future<List<Task>> add(data) async {
+    db = await DB.instance.database;
+    Task task = data as Task;
+
+    var response = await db.rawInsert('INSERT INTO tasks (name, category) VALUES ("${task.name}", "${task.category}")');
+    if (response <= 0) {
+      print('Erro ao adicionar');
+    } else {
+      _tasks.add(data);
+    }
+
     _tasks.add(data as Task);
-    return _tasks;
+    return await getWhere(task.category);
   }
   
   @override
-  List<Task> get() {
-    return _tasks;
-  }
-  
-  @override
-  List<Task> remove(data) {
-    Task taskData = data as Task;
-    for (var task in _tasks) {
-      if  (task.name == taskData.name && task.category == taskData.category) {
-        _tasks.remove(task);
-        break;
+  get() async {
+    _tasks.clear();
+    db = await DB.instance.database;
+
+    List dbCategories = await db.rawQuery('SELECT * FROM tasks');
+    if (dbCategories.isEmpty) {
+      print('Consulta retornou lista vazia');
+    } else {
+      print('Recuperou pelo menos 1 tarefa');
+      for (var i = 0; i < dbCategories.length; i++) {
+        _tasks.insert(
+            0,
+            Task(
+              id: dbCategories[i]['id'],
+              name: dbCategories[i]['name'],
+              category: dbCategories[i]['category'],
+            ));
       }
     }
 
+    return _tasks;
+  }
 
+  @override
+  Future<List<Task>> getWhere(String name) async {
+    // return _tasks;
+
+    _tasks.clear();
+    db = await DB.instance.database;
+
+    List dbCategories = await db.rawQuery('SELECT * FROM tasks WHERE category = "$name"');
+    if (dbCategories.isEmpty) {
+      print('Consulta retornou lista vazia');
+    } else {
+      print('Recuperou pelo menos 1 tarefa');
+      for (var i = 0; i < dbCategories.length; i++) {
+        _tasks.insert(
+            0,
+            Task(
+              id: dbCategories[i]['id'],
+              name: dbCategories[i]['name'],
+              category: dbCategories[i]['category'],
+            ));
+      }
+    }
+
+    return _tasks;
+  }
+  
+  @override
+  remove(String name) async {
+    db = await DB.instance.database;
+    var response = await db.rawDelete('DELETE FROM tasks WHERE name = "$name"');
+    return response;
+  }
+
+  @override
+  List<Task> removeByIndex(int index) {
+    _tasks.removeAt(index);
     return _tasks;
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Category {
   final IconData? icon;
   final String name;
-  final List tasks;
+  final int tasks;
   final Color? color;
 
   Category({
@@ -12,4 +12,6 @@ class Category {
     required this.tasks,
     required this.color,
   });
+
+  
 }
