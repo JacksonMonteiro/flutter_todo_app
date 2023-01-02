@@ -26,6 +26,21 @@ class CategoryViewPresenter {
   final CategoryViewContract contract;
   CategoryViewPresenter(this.contract);
 
+  initTasksNumber() async {
+    state.value = CategoryViewState.loading;
+    try {
+      var response = await service.get();
+      
+      if (response.isNotEmpty) {
+          tasksNumber = tasks.length;
+      }
+    } catch (e) {
+      print('Houve um erro desconhecido ao preencher o número de tarefas');
+    }
+    
+    state.value = CategoryViewState.start;
+  }
+
   getTasks() async {
     state.value = CategoryViewState.loading;
     try {
@@ -36,6 +51,7 @@ class CategoryViewPresenter {
           tasksNumber = tasks.length;
       }
 
+      print('Número de tarefas: $tasksNumber');
     } catch (e) {
       print('Houve um erro desconhecido: ');
     }
@@ -50,7 +66,9 @@ class CategoryViewPresenter {
       
       if (response.isNotEmpty) {
           tasks = response as List<Task>;
-          updateCategory(category, (tasksNumber + 1));
+          tasksNumber = tasksNumber + 1;
+          updateCategory(category, tasksNumber);
+          print('Número de tarefas: $tasksNumber');
           state.value = CategoryViewState.start;
       }
     } catch (e) {
@@ -75,13 +93,18 @@ class CategoryViewPresenter {
   }
 
   removeTask(String name, int index) async {
+    await initTasksNumber();
+    
+    print('Número de tarefas: $tasksNumber');
+    
     state.value = CategoryViewState.loading;
     try {
       var response = await service.remove(name);
       if (response <= 0 ) {
         print('Erro ao deletar');
       } else {
-        await updateCategory(category, (tasksNumber - 1));
+        tasksNumber = tasksNumber - 1;
+        await updateCategory(category, tasksNumber);
         removeByIndex(index);
         return true;
       }

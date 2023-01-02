@@ -20,13 +20,14 @@ class TaskService extends IService {
     }
 
     _tasks.add(data as Task);
-    return _tasks;
+    return await get();
   }
   
   @override
   Future<List<Task>> get() async {
     // return _tasks;
 
+    _tasks.clear();
     db = await DB.instance.database;
 
     List dbCategories = await db.rawQuery('SELECT * FROM tasks');
